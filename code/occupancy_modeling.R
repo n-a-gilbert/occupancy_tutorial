@@ -167,3 +167,103 @@ merge(post, data.frame(can = seq(from = min(ybch$occ.covs$canopy), to = max(ybch
   ggplot2::ggplot(aes(x = can, y = mean)) +
   ggplot2::geom_ribbon(aes(ymin = l95, ymax = u95), color = NA, alpha = 0.2) + 
   ggplot2::geom_line(size = 1.5)
+
+alpha_post <- m3$alpha.samples |> 
+  tibble::as_tibble() |> 
+  janitor::clean_names() |> 
+  dplyr::slice(1:2000)
+
+merge(alpha_post, 
+      data.frame( date = seq(from = min(ybch$det.covs$date), 
+                             to = max(ybch$det.covs$date),
+                             by = 0.25)),
+      by = NULL) |> 
+  tibble::as_tibble() |> 
+  dplyr::mutate(lp = intercept + date.x * date.y  ) |> 
+  dplyr::mutate(p = plogis(lp)) |> 
+  dplyr::group_by(date.y) |> 
+  dplyr::summarise(l95 = quantile(p , c(0.025)), 
+                   mean = mean(p), 
+                   u95 = quantile(p, c(0.975))) |> 
+  
+  ggplot2::ggplot(aes(x = date.y, y = mean)) +
+  ggplot2::geom_ribbon(aes(ymin = l95, ymax = u95), color = NA, alpha = 0.2) + 
+  ggplot2::geom_line(size = 1.5) +
+  ggplot2::labs(x = "Date", 
+                y = "Predicted detection probability")
+
+merge(alpha_post, 
+      data.frame( time = seq(from = min(ybch$det.covs$time), 
+                             to = max(ybch$det.covs$time),
+                             by = 0.25)),
+      by = NULL) |> 
+  tibble::as_tibble() |> 
+  dplyr::mutate(lp = intercept + time.x * time.y + i_time_2 * time.y * time.y  ) |> 
+  dplyr::mutate(p = plogis(lp)) |> 
+  dplyr::group_by(time.y) |> 
+  dplyr::summarise(l95 = quantile(p , c(0.025)), 
+                   mean = mean(p), 
+                   u95 = quantile(p, c(0.975))) |> 
+  
+  ggplot2::ggplot(aes(x = time.y, y = mean)) +
+  ggplot2::geom_ribbon(aes(ymin = l95, ymax = u95), color = NA, alpha = 0.2) + 
+  ggplot2::geom_line(size = 1.5) +
+  ggplot2::labs(x = "Minutes after sunrise", 
+                y = "Predicted detection probability")
+
+merge(alpha_post, 
+      data.frame( cars = seq(from = min(ybch$det.covs$cars), 
+                             to = max(ybch$det.covs$cars),
+                             by = 0.25)),
+      by = NULL) |> 
+  tibble::as_tibble() |> 
+  dplyr::mutate(lp = intercept + cars.x * cars.y  ) |> 
+  dplyr::mutate(p = plogis(lp)) |> 
+  dplyr::group_by(cars.y) |> 
+  dplyr::summarise(l95 = quantile(p , c(0.025)), 
+                   mean = mean(p), 
+                   u95 = quantile(p, c(0.975))) |> 
+  
+  ggplot2::ggplot(aes(x = cars.y, y = mean)) +
+  ggplot2::geom_ribbon(aes(ymin = l95, ymax = u95), color = NA, alpha = 0.2) + 
+  ggplot2::geom_line(size = 1.5) +
+  ggplot2::labs(x = "Number of cars", 
+                y = "Predicted detection probability")
+
+merge(alpha_post, 
+      data.frame( wind = seq(from = min(ybch$det.covs$wind), 
+                             to = max(ybch$det.covs$wind),
+                             by = 0.25)),
+      by = NULL) |> 
+  tibble::as_tibble() |> 
+  dplyr::mutate(lp = intercept + wind.x * wind.y  ) |> 
+  dplyr::mutate(p = plogis(lp)) |> 
+  dplyr::group_by(wind.y) |> 
+  dplyr::summarise(l95 = quantile(p , c(0.025)), 
+                   mean = mean(p), 
+                   u95 = quantile(p, c(0.975))) |> 
+  
+  ggplot2::ggplot(aes(x = wind.y, y = mean)) +
+  ggplot2::geom_ribbon(aes(ymin = l95, ymax = u95), color = NA, alpha = 0.2) + 
+  ggplot2::geom_line(size = 1.5) +
+  ggplot2::labs(x = "Wind speed", 
+                y = "Predicted detection probability")
+
+merge(alpha_post, 
+      data.frame( temp = seq(from = min(ybch$det.covs$temp), 
+                             to = max(ybch$det.covs$temp),
+                             by = 0.25)),
+      by = NULL) |> 
+  tibble::as_tibble() |> 
+  dplyr::mutate(lp = intercept + temp.x * temp.y  ) |> 
+  dplyr::mutate(p = plogis(lp)) |> 
+  dplyr::group_by(temp.y) |> 
+  dplyr::summarise(l95 = quantile(p , c(0.025)), 
+                   mean = mean(p), 
+                   u95 = quantile(p, c(0.975))) |> 
+  
+  ggplot2::ggplot(aes(x = temp.y, y = mean)) +
+  ggplot2::geom_ribbon(aes(ymin = l95, ymax = u95), color = NA, alpha = 0.2) + 
+  ggplot2::geom_line(size = 1.5) +
+  ggplot2::labs(x = "Temperature", 
+                y = "Predicted detection probability")
